@@ -63,6 +63,7 @@ class Models:
     TURBO_16 = "gpt-3.5-turbo-16k"
     TURBO_DEV = "gpt-3.5-turbo-0613"
     TURBO_16_DEV = "gpt-3.5-turbo-16k-0613"
+    LLAMA_CODE = "codellama-34b"
 
     # GPT4 Models
     GPT4 = "gpt-4"
@@ -78,6 +79,7 @@ class Models:
         TURBO_16,
         TURBO_DEV,
         TURBO_16_DEV,
+        LLAMA_CODE,
         GPT4,
         GPT4_32,
         GPT4_DEV,
@@ -88,6 +90,7 @@ class Models:
         TURBO_16,
         TURBO_DEV,
         TURBO_16_DEV,
+        LLAMA_CODE,
     ]
     GPT4_MODELS = [
         GPT4,
@@ -108,6 +111,7 @@ class Models:
         TURBO_16: 16384,
         TURBO_DEV: 4096,
         TURBO_16_DEV: 16384,
+        LLAMA_CODE: 4096,
         GPT4: 8192,
         GPT4_32: 32768,
         GPT4_DEV: 8192,
@@ -695,7 +699,7 @@ class Model:
                 if self.openai_organization:
                     headers["OpenAI-Organization"] = self.openai_organization
             async with session.post(
-                "https://api.openai.com/v1/embeddings", json=payload, headers=headers
+                "https://api.daku.tech/v1/embeddings", json=payload, headers=headers
             ) as resp:
                 response = await resp.json()
 
@@ -746,7 +750,7 @@ class Model:
                 if self.openai_organization:
                     headers["OpenAI-Organization"] = self.openai_organization
             async with session.post(
-                "https://api.openai.com/v1/edits", json=payload, headers=headers
+                "https://api.daku.tech/v1/edits", json=payload, headers=headers
             ) as resp:
                 response = await resp.json()
                 await self.valid_text_request(response, model=Models.EDIT)
@@ -769,7 +773,7 @@ class Model:
             }
             payload = {"input": text}
             async with session.post(
-                "https://api.openai.com/v1/moderations",
+                "https://api.daku.tech/v1/moderations",
                 headers=headers,
                 json=payload,
             ) as response:
@@ -820,7 +824,7 @@ class Model:
                 if self.openai_organization:
                     headers["OpenAI-Organization"] = self.openai_organization
             async with session.post(
-                "https://api.openai.com/v1/completions", json=payload, headers=headers
+                "https://api.daku.tech/v1/completions", json=payload, headers=headers
             ) as resp:
                 response = await resp.json()
 
@@ -869,7 +873,7 @@ class Model:
                 if self.openai_organization:
                     headers["OpenAI-Organization"] = self.openai_organization
             async with session.post(
-                "https://api.openai.com/v1/completions", json=payload, headers=headers
+                "https://api.daku.tech/v1/completions", json=payload, headers=headers
             ) as resp:
                 response = await resp.json()
 
@@ -987,7 +991,7 @@ class Model:
                     headers["OpenAI-Organization"] = self.openai_organization
 
             async with session.post(
-                "https://api.openai.com/v1/chat/completions",
+                "https://api.daku.tech/v1/chat/completions",
                 json=payload,
                 headers=headers,
             ) as resp:
@@ -1035,7 +1039,7 @@ class Model:
                 data.add_field("temperature", temperature_override)
 
             async with session.post(
-                "https://api.openai.com/v1/audio/transcriptions",
+                "https://api.daku.tech/v1/audio/transcriptions",
                 headers={
                     "Authorization": f"Bearer {self.openai_key if not custom_api_key else custom_api_key}",
                 },
@@ -1130,7 +1134,7 @@ class Model:
                         headers["OpenAI-Organization"] = self.openai_organization
 
                 async with session.post(
-                    "https://api.openai.com/v1/completions",
+                    "https://api.daku.tech/v1/completions",
                     json=payload,
                     headers=headers,
                 ) as resp:
@@ -1170,7 +1174,7 @@ class Model:
                     if self.openai_organization:
                         headers["OpenAI-Organization"] = self.openai_organization
                 async with session.post(
-                    "https://api.openai.com/v1/chat/completions",
+                    "https://api.daku.tech/v1/chat/completions",
                     json=payload,
                     headers=headers,
                 ) as resp:
@@ -1196,7 +1200,7 @@ class Model:
             }
             headers = {"Authorization": f"Bearer {api_key}"}
             async with session.post(
-                "https://api.openai.com/v1/completions", json=payload, headers=headers
+                "https://api.daku.tech/v1/completions", json=payload, headers=headers
             ) as resp:
                 response = await resp.json()
                 try:
@@ -1231,7 +1235,7 @@ class Model:
         response = None
 
         if not vary:
-            payload = {"prompt": prompt, "n": self.num_images, "size": self.image_size}
+            payload = {"prompt": prompt, "n": self.num_images, "size": self.image_size, "model": "anything-diffusion-5"}
             headers = {
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {self.openai_key if not custom_api_key else custom_api_key}",
@@ -1245,7 +1249,7 @@ class Model:
                 raise_for_status=True, timeout=aiohttp.ClientTimeout(total=300)
             ) as session:
                 async with session.post(
-                    "https://api.openai.com/v1/images/generations",
+                    "https://api.daku.tech/v1/images/generations",
                     json=payload,
                     headers=headers,
                 ) as resp:
@@ -1264,7 +1268,7 @@ class Model:
                     )
 
                     async with session.post(
-                        "https://api.openai.com/v1/images/variations",
+                        "https://api.daku.tech/v1/images/variations",
                         headers={
                             "Authorization": f"Bearer {self.openai_key if not custom_api_key else custom_api_key}",
                         },
